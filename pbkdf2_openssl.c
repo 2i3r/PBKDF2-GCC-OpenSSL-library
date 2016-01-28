@@ -227,12 +227,13 @@ int main(int argc, char **argv)
   char *expected = NULL;
   uint32_t iterations = 0;
   uint32_t outputBytes = 0;
-  uint16_t algo = 0;
+  uint16_t algo = SHA_1_openssl;//0;
   int c;
   uint8_t verbose = 0;
   uint8_t help = 0;
   uint8_t oType = 0;
   uint8_t sType = 0;
+  uint8_t _nr = 0;
   
   opterr = 0;
   
@@ -330,6 +331,9 @@ int main(int argc, char **argv)
 	    }
 
       break;
+      case 'n':
+        _nr = 1;
+      break;
       case '?':
         puts("Case ?");fflush;
        if (optopt == 'c')
@@ -370,7 +374,7 @@ int main(int argc, char **argv)
     puts("                            - base64:		Base64");
     puts("                            - bin:		Binary");
     puts("  -e hash            Expected hash (in the same format as outputfmt) results in output of 0 <actual> <expected> = different, 1 = same NOT YET IMPLEMENTED");
-    puts("  -n                 Interactive mode; NOT YET IMPLEMENTED");
+    puts("  -n                 Do not output with trailing newline");
   }
      
   if (verbose)
@@ -382,19 +386,19 @@ int main(int argc, char **argv)
   if (algo <= 0)
     {
     puts("You must select a known algorithm identifier.");
-    return 10;
+    return -10;
     }
 
   if (iterations <= 0)
     {
     puts("You must select at least one iteration (and preferably tens of thousands or (much) more.");
-    return 11;
+    return -11;
     }
 
   if (outputBytes <= 0)
     {
     puts("You must select at least one byte of output length.");
-    return 12;
+    return -12;
     }
 
   switch (sType)
@@ -501,7 +505,9 @@ int main(int argc, char **argv)
   {
     // Normal output
     //
-        printf("%s\n",finResult);
+        printf("%s",finResult);
+        if(!_nr)
+            printf("\n");
   }
   else 
   {
